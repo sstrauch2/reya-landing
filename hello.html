@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reya — Your bank account is lying to you.</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #FBF9F4;
+    --bg-warm: #F5EFE3;
+    --ink: #1A1A2E;
+    --ink-soft: #4B4B5E;
+    --ink-muted: #8A8A99;
+    --gold: #C8932B;
+    --gold-soft: #E8B547;
+    --gold-bg: rgba(200,147,43,0.08);
+    --gold-border: rgba(200,147,43,0.18);
+    --card: #FFFFFF;
+    --border: rgba(26,26,46,0.08);
+    --phone-bg: #FFFFFF;
+    --phone-card: #F7F4ED;
+    --phone-border: rgba(26,26,46,0.06);
+    --phone-green: #2D7D46;
+    --phone-blue: #3B6FB8;
+    --phone-amber: #C8932B;
+  }
+
+  body {
+    font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 720px;
+    pointer-events: none;
+    z-index: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 70% 20%, rgba(232,181,71,0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 20% 30%, rgba(200,147,43,0.06) 0%, transparent 70%),
+      linear-gradient(180deg, var(--bg-warm) 0%, var(--bg) 70%);
+  }
+  .hero-bg::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(200,147,43,0.15), transparent);
+  }
+
+  .nav {
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 10;
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.7rem;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .nav-links {
+    display: flex;
+    gap: 36px;
+    align-items: center;
+  }
+  .nav-link {
+    font-size: 0.92rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-weight: 500;
+  }
+  .nav-link:hover { color: var(--ink); }
+  .nav-cta {
+    font-size: 0.88rem;
+    padding: 10px 22px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 999px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .nav-cta:hover { background: #2A2A42; }
+
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 60px 40px 100px;
+    display: flex;
+    align-items: flex-start;
+    gap: 70px;
+    position: relative;
+    z-index: 1;
+  }
+  .hero-content {
+    flex: 1;
+    max-width: 540px;
+  }
+  .hero-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 3.2rem;
+    line-height: 1.12;
+    margin-bottom: 24px;
+    letter-spacing: -0.015em;
+    color: var(--ink);
+  }
+  .hero-title em {
+    font-style: normal;
+    color: var(--gold);
+  }
+  .hero-subtitle {
+    font-size: 1.18rem;
+    line-height: 1.6;
+    color: var(--ink-soft);
+    margin-bottom: 38px;
+    max-width: 460px;
+    font-weight: 400;
+  }
+  .hero-cta-group {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 14px;
+  }
+  .cta-microcopy {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    margin-bottom: 32px;
+    font-weight: 500;
+  }
+  .cta-primary {
+    padding: 15px 34px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 999px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(26,26,46,0.15);
+  }
+  .cta-primary:hover {
+    background: #2A2A42;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(26,26,46,0.2);
+  }
+  .cta-secondary {
+    font-size: 0.95rem;
+    color: var(--ink-soft);
+    text-decoration: none;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .cta-secondary:hover { color: var(--ink); }
+  .cta-secondary svg { transition: transform 0.2s; }
+  .cta-secondary:hover svg { transform: translateX(3px); }
+
+  .hero-trust {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 0.82rem;
+    color: var(--ink-muted);
+  }
+  .hero-trust span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .hero-visual {
+    flex: 0 0 380px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    position: relative;
+    padding: 0 30px;
+  }
+  .hero-visual::before {
+    content: '';
+    position: absolute;
+    inset: -20px 0 0 0;
+    background:
+      radial-gradient(ellipse 70% 60% at 50% 40%, rgba(232,181,71,0.22) 0%, rgba(232,181,71,0.08) 40%, transparent 75%);
+    border-radius: 32px;
+    z-index: 0;
+  }
+  .app-card {
+    width: 300px;
+    background: #FFFFFF;
+    border-radius: 12px 12px 0 0;
+    border: 1px solid rgba(26,26,46,0.06);
+    border-bottom: none;
+    box-shadow:
+      0 1px 2px rgba(26,26,46,0.04),
+      0 20px 50px rgba(26,26,46,0.14),
+      0 8px 24px rgba(200,147,43,0.10);
+    overflow: hidden;
+    position: relative;
+    z-index: 1;
+  }
+  .p-header {
+    padding: 14px 18px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .p-header-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 17px;
+    font-weight: 400;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .p-header-icon {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--phone-card);
+  }
+  .p-tabs {
+    display: flex;
+    margin: 10px 16px 0;
+    border-bottom: 1px solid var(--phone-border);
+  }
+  .p-tab {
+    flex: 1;
+    text-align: center;
+    padding: 9px 0;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-muted);
+  }
+  .p-tab.active {
+    color: var(--ink);
+    border-bottom: 2px solid var(--gold);
+    font-weight: 600;
+  }
+  .p-smart-limit {
+    padding: 28px 16px 24px;
+    text-align: center;
+  }
+  .p-sl-label {
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink-muted);
+    margin-bottom: 8px;
+  }
+  .p-sl-amount {
+    font-family: 'DM Serif Display', serif;
+    font-size: 48px;
+    font-weight: 400;
+    color: var(--phone-green);
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .p-sl-sub {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    margin-top: 8px;
+  }
+  .p-buckets {
+    padding: 4px 18px 24px;
+    position: relative;
+  }
+  .p-bucket {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 11px 0;
+    background: transparent;
+    border-bottom: 1px solid rgba(26,26,46,0.06);
+  }
+  .p-bucket:last-child {
+    border-bottom: none;
+  }
+  .p-bucket-left {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .p-bucket-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    opacity: 0.6;
+  }
+  .p-bucket-name {
+    font-size: 11px;
+    font-weight: 400;
+    color: var(--ink-muted);
+  }
+  .p-bucket-amt {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--ink-muted);
+  }
+
+  /* Section 2: Founder note */
+  .why {
+    background: var(--bg);
+    padding: 80px 40px 100px;
+    position: relative;
+    z-index: 2;
+  }
+  .why-inner { max-width: 720px; margin: 0 auto; text-align: center; }
+  .why-eyebrow {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+  }
+  .why-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2.6rem; line-height: 1.15; color: var(--ink);
+    margin-bottom: 36px; letter-spacing: -0.01em;
+  }
+  .why-title em { font-style: normal; color: var(--gold); }
+  .why-body {
+    font-size: 1.1rem; line-height: 1.75; color: var(--ink-soft);
+    text-align: left; max-width: 600px; margin: 0 auto 40px;
+  }
+  .why-body p { margin-bottom: 20px; }
+  .why-body p:last-child { margin-bottom: 0; }
+  .why-body strong { color: var(--ink); font-weight: 600; }
+  .why-bridge { font-size: 0.95rem; color: var(--ink-muted); font-style: italic; margin-top: 20px; }
+
+  /* Section 3: How it works */
+  .how {
+    background: var(--bg-warm);
+    padding: 90px 40px 110px;
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid rgba(200,147,43,0.12);
+  }
+  .how-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+  .how-eyebrow {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+  }
+  .how-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2.6rem; line-height: 1.15; color: var(--ink);
+    margin-bottom: 24px; letter-spacing: -0.01em;
+  }
+  .how-title em { font-style: normal; color: var(--gold); }
+  .how-intro {
+    font-size: 1.1rem; line-height: 1.65; color: var(--ink-soft);
+    max-width: 600px; margin: 0 auto 70px;
+  }
+  .how-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 50px; text-align: left; }
+  .how-step {
+    position: relative; background: var(--card); border-radius: 20px;
+    padding: 32px 28px; border: 1px solid var(--border);
+    box-shadow: 0 4px 24px rgba(26,26,46,0.04);
+  }
+  .how-step-num {
+    position: absolute; top: -18px; left: 28px;
+    width: 36px; height: 36px;
+    background: var(--ink); color: var(--bg); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Serif Display', serif; font-size: 18px; font-weight: 400;
+  }
+  .how-step-visual {
+    height: 130px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px;
+  }
+  .how-step-visual svg { width: 100%; max-width: 180px; height: auto; }
+  .mini-phone {
+    width: 130px; background: #FFFFFF; border-radius: 18px; padding: 6px;
+    box-shadow: 0 0 0 1px var(--border), 0 12px 30px rgba(26,26,46,0.12);
+  }
+  .mini-phone-screen { background: #FFFFFF; border-radius: 14px; padding: 18px 10px 22px; text-align: center; }
+  .mini-label {
+    font-size: 8px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 4px;
+  }
+  .mini-amount {
+    font-family: 'DM Serif Display', serif; font-size: 28px; font-weight: 400;
+    color: #2D7D46; line-height: 1;
+  }
+  .mini-sub { font-size: 9px; color: var(--ink-muted); margin-top: 5px; }
+  .how-step-title {
+    font-family: 'DM Sans', sans-serif; font-size: 1.1rem; font-weight: 600;
+    color: var(--ink); margin-bottom: 10px; line-height: 1.3;
+  }
+  .how-step-body { font-size: 0.95rem; line-height: 1.6; color: var(--ink-soft); }
+
+  /* Section 4: Not a budgeting app */
+  .diff {
+    background: var(--bg);
+    padding: 100px 40px 110px;
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid rgba(200,147,43,0.1);
+  }
+  .diff-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+  .diff-eyebrow {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+  }
+  .diff-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2.6rem; line-height: 1.15; color: var(--ink);
+    margin-bottom: 24px; letter-spacing: -0.01em;
+  }
+  .diff-title em { font-style: normal; color: var(--gold); }
+  .diff-intro {
+    font-size: 1.1rem; line-height: 1.65; color: var(--ink-soft);
+    max-width: 640px; margin: 0 auto 60px;
+  }
+  .diff-table {
+    background: var(--card); border-radius: 20px; border: 1px solid var(--border);
+    overflow: hidden; box-shadow: 0 4px 24px rgba(26,26,46,0.04);
+    text-align: left; margin-bottom: 0;
+  }
+  .diff-row {
+    display: grid; grid-template-columns: 1.2fr 1.6fr 1.6fr;
+    border-bottom: 1px solid var(--border);
+  }
+  .diff-row:last-child { border-bottom: none; }
+  .diff-header-row { background: var(--bg-warm); }
+  .diff-col {
+    padding: 22px 24px; font-size: 0.98rem; line-height: 1.55; color: var(--ink-soft);
+  }
+  .diff-header-row .diff-col {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--ink-muted); padding: 16px 24px;
+  }
+  .diff-col-job {
+    font-weight: 600; color: var(--ink);
+    border-right: 1px solid var(--border);
+    background: rgba(245,239,227,0.4);
+  }
+  .diff-header-row .diff-col-job { background: var(--bg-warm); color: var(--ink-muted); }
+  .diff-col-old { border-right: 1px solid var(--border); color: var(--ink-muted); }
+  .diff-header-row .diff-col-old { color: var(--ink-muted); }
+  .diff-col-new {
+    color: var(--ink); font-weight: 500;
+    background: rgba(200,147,43,0.08);
+    border-left: 3px solid var(--gold);
+  }
+  .diff-header-row .diff-col-new {
+    background: rgba(200,147,43,0.08); color: var(--gold); font-weight: 600;
+    border-left: 3px solid var(--gold);
+  }
+
+  /* Section 5: Pricing */
+  .price {
+    background: var(--bg-warm);
+    padding: 100px 40px 120px;
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid rgba(200,147,43,0.12);
+  }
+  .price-inner { max-width: 920px; margin: 0 auto; text-align: center; }
+  .price-eyebrow {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--gold); margin-bottom: 18px;
+  }
+  .price-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2.6rem; line-height: 1.15; color: var(--ink);
+    margin-bottom: 24px; letter-spacing: -0.01em;
+  }
+  .price-title em { font-style: normal; color: var(--gold); }
+  .price-intro {
+    font-size: 1.1rem; line-height: 1.65; color: var(--ink-soft);
+    max-width: 620px; margin: 0 auto 60px;
+  }
+  .price-card {
+    background: var(--card); border-radius: 24px; border: 1px solid var(--border);
+    box-shadow: 0 10px 40px rgba(26,26,46,0.06);
+    padding: 48px 40px 44px; max-width: 520px; margin: 60px auto 0;
+  }
+  .price-amount {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 4.5rem; line-height: 1; color: var(--ink); letter-spacing: -0.02em;
+  }
+  .price-amount .price-dollar {
+    font-size: 2.2rem; vertical-align: super; color: var(--ink-muted);
+    font-weight: 400; margin-right: 2px;
+  }
+  .price-amount .price-period {
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; color: var(--ink-muted);
+    font-weight: 500; letter-spacing: 0; margin-left: 6px;
+  }
+  .price-alignment {
+    font-size: 0.95rem; line-height: 1.6; color: var(--ink-soft);
+    margin-top: 20px; max-width: 380px; margin-left: auto; margin-right: auto;
+    font-style: italic;
+  }
+  .price-alignment strong { color: var(--ink); font-weight: 600; font-style: normal; }
+  .price-divider { height: 1px; background: var(--border); margin: 32px 0 28px; }
+  .price-cta {
+    padding: 15px 36px; background: var(--ink); color: var(--bg);
+    border: none; border-radius: 999px; font-size: 1rem; font-weight: 500;
+    cursor: pointer; font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 4px 20px rgba(26,26,46,0.15); transition: all 0.2s;
+  }
+  .price-cta:hover {
+    background: #2A2A42; transform: translateY(-1px);
+    box-shadow: 0 6px 24px rgba(26,26,46,0.2);
+  }
+  .price-cta-sub { font-size: 0.8rem; color: var(--ink-muted); margin-top: 14px; }
+  .price-compare-label {
+    font-size: 0.78rem; font-weight: 600; letter-spacing: 0.14em;
+    text-transform: uppercase; color: var(--ink-muted); margin-bottom: 24px;
+  }
+  .price-compare {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 28px;
+  }
+  .price-compare-item {
+    background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+    padding: 22px 16px; text-align: center;
+  }
+  .price-compare-item.reya { background: var(--ink); border-color: var(--ink); }
+  .price-compare-amount {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.8rem; color: var(--ink); line-height: 1; margin-bottom: 6px;
+  }
+  .price-compare-item.reya .price-compare-amount { color: var(--gold-soft); }
+  .price-compare-label-sm { font-size: 0.75rem; color: var(--ink-muted); line-height: 1.4; }
+  .price-compare-item.reya .price-compare-label-sm { color: rgba(255,255,255,0.7); }
+  .price-compare-source {
+    font-size: 0.7rem; color: var(--ink-muted); max-width: 700px; margin: 0 auto; line-height: 1.5;
+  }
+
+  /* Section 6: Trust */
+  .trust {
+    background: var(--bg);
+    padding: 70px 40px 80px;
+    position: relative;
+    z-index: 2;
+    border-top: 1px solid rgba(200,147,43,0.1);
+  }
+  .trust-inner { max-width: 1100px; margin: 0 auto; text-align: center; }
+  .trust-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 2rem; line-height: 1.2; color: var(--ink);
+    margin-bottom: 12px; letter-spacing: -0.01em;
+  }
+  .trust-sub { font-size: 1rem; color: var(--ink-soft); margin-bottom: 50px; }
+  .trust-grid {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 32px; text-align: left;
+  }
+  .trust-item { padding: 0; }
+  .trust-icon {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px; color: var(--gold);
+  }
+  .trust-icon svg { width: 100%; height: 100%; }
+  .trust-label {
+    font-family: 'DM Sans', sans-serif; font-size: 0.95rem;
+    font-weight: 600; color: var(--ink); margin-bottom: 6px;
+  }
+  .trust-body { font-size: 0.85rem; line-height: 1.55; color: var(--ink-muted); }
+  .trust-credibility {
+    font-size: 0.9rem; color: var(--ink-soft); margin-top: 50px;
+    font-style: italic; max-width: 620px; margin-left: auto; margin-right: auto;
+  }
+
+  /* Sticky nav (appears after scroll) */
+  .sticky-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: rgba(251, 249, 244, 0.85);
+    backdrop-filter: saturate(180%) blur(16px);
+    -webkit-backdrop-filter: saturate(180%) blur(16px);
+    border-bottom: 1px solid rgba(26,26,46,0.06);
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sticky-nav.visible {
+    transform: translateY(0);
+  }
+  .sticky-nav-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 12px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .sticky-nav-logo {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.3rem;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .sticky-nav-cta {
+    font-size: 0.82rem;
+    padding: 7px 18px;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid rgba(26,26,46,0.25);
+    border-radius: 999px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    transition: all 0.2s;
+  }
+  .sticky-nav-cta:hover {
+    background: var(--ink);
+    color: var(--bg);
+    border-color: var(--ink);
+  }
+
+  @media (max-width: 720px) {
+    .sticky-nav-inner { padding: 10px 20px; }
+    .sticky-nav-logo { font-size: 1.15rem; }
+    .sticky-nav-cta { padding: 7px 14px; font-size: 0.78rem; }
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--bg);
+    padding: 36px 40px 40px;
+    border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 2;
+  }
+  .footer-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 30px;
+  }
+  .footer-logo {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 1.3rem;
+    color: var(--ink);
+    letter-spacing: 0.01em;
+  }
+  .footer-links {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    font-size: 0.82rem;
+  }
+  .footer-links a {
+    color: var(--ink-muted);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .footer-links a:hover { color: var(--ink-soft); }
+  .footer-copy {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+  }
+
+  @media (max-width: 720px) {
+    .footer-inner { flex-direction: column; gap: 18px; text-align: center; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px; }
+  }
+
+  /* Section 7: Final CTA */
+  .close {
+    background: var(--bg);
+    padding: 120px 40px 140px;
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    overflow: hidden;
+    border-top: 1px solid rgba(200,147,43,0.08);
+  }
+  .close::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at 50% 50%, rgba(232,181,71,0.16) 0%, rgba(232,181,71,0.04) 45%, transparent 75%);
+    pointer-events: none;
+  }
+  .close-inner {
+    position: relative;
+    z-index: 1;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+  .close-title {
+    font-family: 'DM Serif Display', Georgia, serif;
+    font-size: 3.4rem;
+    line-height: 1.1;
+    color: var(--ink);
+    margin-bottom: 48px;
+    letter-spacing: -0.015em;
+  }
+  .close-title em {
+    font-style: normal;
+    color: var(--gold);
+    display: block;
+  }
+  .close-cta {
+    padding: 17px 42px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    border-radius: 999px;
+    font-size: 1.05rem;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'DM Sans', sans-serif;
+    box-shadow: 0 6px 28px rgba(26,26,46,0.18);
+    transition: all 0.2s;
+  }
+  .close-cta:hover {
+    background: #2A2A42;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(26,26,46,0.24);
+  }
+  .close-sub {
+    font-size: 0.88rem;
+    color: var(--ink-muted);
+    margin-top: 22px;
+    font-style: italic;
+  }
+
+  @media (max-width: 860px) {
+    .hero {
+      flex-direction: column; text-align: center;
+      padding: 40px 24px 70px; gap: 50px;
+    }
+    .hero-content { max-width: 100%; }
+    .hero-subtitle { margin-left: auto; margin-right: auto; }
+    .hero-cta-group { justify-content: center; }
+    .hero-trust { justify-content: center; flex-wrap: wrap; }
+    .hero-visual { flex: none; }
+    .nav { padding: 20px 24px; }
+    .nav-links { gap: 20px; }
+    .hero-title { font-size: 2.8rem; }
+    .hero-bg { height: 600px; }
+
+    .why { padding: 60px 24px 80px; }
+    .why-title { font-size: 2rem; }
+    .why-body { font-size: 1.02rem; }
+
+    .how { padding: 60px 24px 80px; }
+    .how-title { font-size: 2rem; }
+    .how-steps { grid-template-columns: 1fr; gap: 50px; }
+    .how-intro { margin-bottom: 50px; }
+
+    .diff { padding: 60px 20px 80px; }
+    .diff-title { font-size: 1.9rem; }
+    .diff-row { grid-template-columns: 1fr; }
+    .diff-col { padding: 16px 20px; border-right: none !important; }
+    .diff-col-job {
+      background: var(--bg-warm); font-size: 0.85rem;
+      text-transform: uppercase; letter-spacing: 0.08em; padding: 12px 20px;
+    }
+    .diff-col-old::before {
+      content: 'Old way: '; font-weight: 600; color: var(--ink-muted);
+      text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em;
+      display: block; margin-bottom: 4px;
+    }
+    .diff-col-new::before {
+      content: 'With Reya: '; font-weight: 600; color: var(--gold);
+      text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.08em;
+      display: block; margin-bottom: 4px;
+    }
+    .diff-col-old, .diff-col-new { border-bottom: 1px solid var(--border); }
+
+    .price { padding: 60px 20px 80px; }
+    .price-title { font-size: 1.9rem; }
+    .price-card { padding: 36px 24px 32px; }
+    .price-amount { font-size: 3.6rem; }
+    .price-compare { grid-template-columns: 1fr 1fr; }
+
+    .trust { padding: 50px 24px 60px; }
+    .trust-title { font-size: 1.6rem; }
+    .trust-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+
+    .close { padding: 80px 24px 100px; }
+    .close-title { font-size: 2.4rem; }
+  }
+  @media (max-width: 480px) {
+    .nav-links .nav-link { display: none; }
+    .hero-title { font-size: 2.4rem; }
+    .app-card { width: 260px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero-bg"></div>
+
+  <div class="sticky-nav" id="stickyNav">
+    <div class="sticky-nav-inner">
+      <div class="sticky-nav-logo">Reya</div>
+      <button class="sticky-nav-cta">Get Early Access</button>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-logo">Reya</div>
+    <div class="nav-links">
+      <a href="#" class="nav-link">How it works</a>
+      <a href="#" class="nav-link">Pricing</a>
+      <button class="nav-cta">Get Early Access</button>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">Your bank account<br><em>is lying to you.</em></h1>
+      <p class="hero-subtitle">It doesn't know about rent due Friday or the credit card bill coming next week. Reya does. Your Smart Limit is what you can spend right now — without falling further behind.</p>
+      <div class="hero-cta-group">
+        <button class="cta-primary">Get Early Access</button>
+        <button class="cta-secondary">
+          See how it works
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 4l4 4-4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="cta-microcopy">$9/month · Less than one late fee</div>
+      <div class="hero-trust">
+        <span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7l3 3 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/></svg>
+          Built by a former Capital One R&amp;D lead
+        </span>
+        <span>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="3" width="12" height="9" rx="2" stroke="currentColor" opacity="0.5" stroke-width="1.2"/><path d="M4 3V2a3 3 0 016 0v1" stroke="currentColor" opacity="0.5" stroke-width="1.2"/></svg>
+          Bank-level security
+        </span>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="app-card">
+        <div class="p-header">
+          <div class="p-header-title">Reya</div>
+          <div class="p-header-icon"></div>
+        </div>
+        <div class="p-tabs">
+          <div class="p-tab active">Spending</div>
+          <div class="p-tab">Savings</div>
+          <div class="p-tab">Bills</div>
+        </div>
+        <div class="p-smart-limit">
+          <div class="p-sl-label">Smart Limit</div>
+          <div class="p-sl-amount">$1,247</div>
+          <div class="p-sl-sub">Safe to spend this month</div>
+        </div>
+        <div class="p-buckets">
+          <div class="p-bucket">
+            <div class="p-bucket-left">
+              <div class="p-bucket-dot" style="background:var(--phone-green)"></div>
+              <div class="p-bucket-name">Daily Expenses</div>
+            </div>
+            <div class="p-bucket-amt">$847</div>
+          </div>
+          <div class="p-bucket">
+            <div class="p-bucket-left">
+              <div class="p-bucket-dot" style="background:var(--phone-blue)"></div>
+              <div class="p-bucket-name">Groceries</div>
+            </div>
+            <div class="p-bucket-amt">$280</div>
+          </div>
+          <div class="p-bucket">
+            <div class="p-bucket-left">
+              <div class="p-bucket-dot" style="background:var(--phone-amber)"></div>
+              <div class="p-bucket-name">Fun Money</div>
+            </div>
+            <div class="p-bucket-amt">$120</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="why">
+    <div class="why-inner">
+      <div class="why-eyebrow">A note from the founders</div>
+      <h2 class="why-title">Built by people <em>tired of guessing.</em></h2>
+      <div class="why-body">
+        <p>We tried the apps. We made the spreadsheets. We promised ourselves we'd "just be more careful." None of it lasted, because all of it asked us to do the one thing we keep failing at: <strong>track every dollar, every day.</strong></p>
+        <p>We built something that doesn't require it.</p>
+        <p>Reya organizes your money the moment your paycheck arrives — bills covered, savings on track, credit cards reserved. What's left is your Smart Limit. One number. No tracking. No guessing. No falling behind.</p>
+      </div>
+      <div class="why-bridge">Here's how it works ↓</div>
+    </div>
+  </section>
+
+  <section class="how">
+    <div class="how-inner">
+      <div class="how-eyebrow">How it works</div>
+      <h2 class="how-title">One honest number. <em>No work required.</em></h2>
+      <p class="how-intro">Reya is a smart layer on top of your existing bank account. It doesn't move your money. It doesn't replace your bank. It runs the math so you don't have to.</p>
+
+      <div class="how-steps">
+        <div class="how-step">
+          <div class="how-step-num">1</div>
+          <div class="how-step-visual">
+            <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="20" y="40" width="50" height="50" rx="6" fill="#F5EFE3" stroke="#C8932B" stroke-width="1.5"/>
+              <path d="M25 40 L45 28 L65 40" stroke="#C8932B" stroke-width="1.5" stroke-linejoin="round" fill="none"/>
+              <line x1="32" y1="50" x2="32" y2="80" stroke="#C8932B" stroke-width="1.2"/>
+              <line x1="40" y1="50" x2="40" y2="80" stroke="#C8932B" stroke-width="1.2"/>
+              <line x1="50" y1="50" x2="50" y2="80" stroke="#C8932B" stroke-width="1.2"/>
+              <line x1="58" y1="50" x2="58" y2="80" stroke="#C8932B" stroke-width="1.2"/>
+              <line x1="22" y1="85" x2="68" y2="85" stroke="#C8932B" stroke-width="1.5"/>
+              <rect x="85" y="50" width="42" height="28" rx="4" fill="#FFF" stroke="#1A1A2E" stroke-width="1.2"/>
+              <rect x="90" y="44" width="42" height="28" rx="4" fill="#FBF9F4" stroke="#1A1A2E" stroke-width="1.2"/>
+              <circle cx="120" cy="58" r="3" fill="#C8932B"/>
+              <circle cx="125" cy="58" r="3" fill="#1A1A2E" opacity="0.4"/>
+              <path d="M70 65 Q 78 60 85 62" stroke="#C8932B" stroke-width="1.5" stroke-dasharray="2 2" fill="none"/>
+            </svg>
+          </div>
+          <h3 class="how-step-title">Connect your accounts.</h3>
+          <p class="how-step-body">Link your checking, savings, and credit cards in 60 seconds. Reya never moves your money — it just watches the flow and does the math.</p>
+        </div>
+
+        <div class="how-step">
+          <div class="how-step-num">2</div>
+          <div class="how-step-visual">
+            <svg viewBox="0 0 160 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="55" y="12" width="50" height="22" rx="3" fill="#FBF9F4" stroke="#2D7D46" stroke-width="1.5"/>
+              <text x="80" y="27" text-anchor="middle" font-family="DM Sans" font-size="11" font-weight="600" fill="#2D7D46">+$3,200</text>
+              <path d="M80 36 L80 48" stroke="#2D7D46" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M76 44 L80 48 L84 44" stroke="#2D7D46" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+              <rect x="15" y="55" width="38" height="50" rx="6" fill="#F5EFE3" stroke="#C8932B" stroke-width="1.5"/>
+              <text x="34" y="73" text-anchor="middle" font-family="DM Sans" font-size="8" font-weight="600" fill="#1A1A2E">BILLS</text>
+              <text x="34" y="92" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" fill="#C8932B">$1,400</text>
+              <rect x="61" y="55" width="38" height="50" rx="6" fill="#F5EFE3" stroke="#3B6FB8" stroke-width="1.5"/>
+              <text x="80" y="73" text-anchor="middle" font-family="DM Sans" font-size="8" font-weight="600" fill="#1A1A2E">SAVINGS</text>
+              <text x="80" y="92" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" fill="#3B6FB8">$553</text>
+              <rect x="107" y="55" width="38" height="50" rx="6" fill="#F5EFE3" stroke="#2D7D46" stroke-width="1.5"/>
+              <text x="126" y="73" text-anchor="middle" font-family="DM Sans" font-size="8" font-weight="600" fill="#1A1A2E">SPEND</text>
+              <text x="126" y="92" text-anchor="middle" font-family="DM Sans" font-size="9" font-weight="700" fill="#2D7D46">$1,247</text>
+            </svg>
+          </div>
+          <h3 class="how-step-title">Your paycheck arrives. Reya goes to work.</h3>
+          <p class="how-step-body">The moment your income lands, Reya sets aside what you need for bills, savings, and credit card charges. No spreadsheets. No categorizing.</p>
+        </div>
+
+        <div class="how-step">
+          <div class="how-step-num">3</div>
+          <div class="how-step-visual">
+            <div class="mini-phone">
+              <div class="mini-phone-screen">
+                <div class="mini-label">Smart Limit</div>
+                <div class="mini-amount">$1,247</div>
+                <div class="mini-sub">Safe to spend this month</div>
+              </div>
+            </div>
+          </div>
+          <h3 class="how-step-title">Open the app. See your Smart Limit.</h3>
+          <p class="how-step-body">One honest number tells you exactly what's safe to spend. No tracking. No mental math. No falling behind.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="diff">
+    <div class="diff-inner">
+      <div class="diff-eyebrow">Why this is different</div>
+      <h2 class="diff-title">Budgeting apps track what already happened.<br><em>Reya organizes what's next.</em></h2>
+      <p class="diff-intro">Mint, YNAB, spreadsheets, "just being more careful." They all asked you to do the same impossible thing: track every dollar, every day.</p>
+
+      <div class="diff-table">
+        <div class="diff-row diff-header-row">
+          <div class="diff-col diff-col-job">What you want</div>
+          <div class="diff-col diff-col-old">The old way</div>
+          <div class="diff-col diff-col-new">With Reya</div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-col diff-col-job">Spend confidently</div>
+          <div class="diff-col diff-col-old">Open your bank app, do the math in your head, hope you remembered every bill.</div>
+          <div class="diff-col diff-col-new">One number. Always current. Always honest.</div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-col diff-col-job">Pay bills on time</div>
+          <div class="diff-col diff-col-old">Mental gymnastics every payday. Hope rent doesn't sneak up on you.</div>
+          <div class="diff-col diff-col-new">Bills are reserved the moment your paycheck lands. Done.</div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-col diff-col-job">Actually save money</div>
+          <div class="diff-col diff-col-old">Wait until the end of the month. See what's left. Save nothing.</div>
+          <div class="diff-col diff-col-new">Savings come off the top, before you can spend them.</div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-col diff-col-job">Use credit cards safely</div>
+          <div class="diff-col diff-col-old">Swipe now, panic later. Hope the statement isn't as bad as last month.</div>
+          <div class="diff-col diff-col-new">Every charge is reserved against real cash, automatically.</div>
+        </div>
+        <div class="diff-row">
+          <div class="diff-col diff-col-job">Stop thinking about money</div>
+          <div class="diff-col diff-col-old">Log in, categorize, reconcile. Every week. Forever.</div>
+          <div class="diff-col diff-col-new">Open the app once. See one number. Close it.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="price">
+    <div class="price-inner">
+      <div class="price-eyebrow">Pricing</div>
+      <h2 class="price-title">Less than one late fee. <em>Worth a thousand.</em></h2>
+      <p class="price-intro">You're already paying for financial stress. You just don't see the bill.</p>
+
+      <div class="price-compare-label">The real cost of guessing</div>
+      <div class="price-compare">
+        <div class="price-compare-item">
+          <div class="price-compare-amount">$205</div>
+          <div class="price-compare-label-sm">Monthly credit card interest</div>
+        </div>
+        <div class="price-compare-item">
+          <div class="price-compare-amount">$32</div>
+          <div class="price-compare-label-sm">One late fee</div>
+        </div>
+        <div class="price-compare-item">
+          <div class="price-compare-amount">$27</div>
+          <div class="price-compare-label-sm">One overdraft fee</div>
+        </div>
+        <div class="price-compare-item reya">
+          <div class="price-compare-amount">$9</div>
+          <div class="price-compare-label-sm">Reya, all month</div>
+        </div>
+      </div>
+      <p class="price-compare-source">Credit card interest based on the average U.S. household balance of $11,019 at 22.3% APR (Federal Reserve, Q4 2025). Late fee per the CARD Act (average $32 at major issuers). Overdraft fee per Bankrate's 2025 Checking Account Survey.</p>
+
+      <div class="price-card">
+        <div class="price-amount"><span class="price-dollar">$</span>9<span class="price-period">/month</span></div>
+        <p class="price-alignment">No ads. No data selling. No pushing loans and debt. <strong>We only win when you do.</strong></p>
+
+        <div class="price-divider"></div>
+
+        <button class="price-cta">Start Your Free Trial</button>
+        <div class="price-cta-sub">No charge until day 15. Cancel anytime.</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="trust">
+    <div class="trust-inner">
+      <h2 class="trust-title">Your money stays put.</h2>
+      <p class="trust-sub">We never touch a dollar. Here's how that works.</p>
+
+      <div class="trust-grid">
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M12 2C9.5 2 7.5 4 7.5 6.5V10H6C5 10 4 11 4 12V20C4 21 5 22 6 22H18C19 22 20 21 20 20V12C20 11 19 10 18 10H16.5V6.5C16.5 4 14.5 2 12 2Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <circle cx="12" cy="16" r="1.5" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="trust-label">Read-only access</div>
+          <div class="trust-body">Reya can see your transactions but can't move a dollar.</div>
+        </div>
+
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M3 21V10L12 4L21 10V21" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M3 21H21" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="8" y1="14" x2="8" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="12" y1="14" x2="12" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="16" y1="14" x2="16" y2="18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="trust-label">Powered by Plaid</div>
+          <div class="trust-body">The same secure bank connection used by Venmo and Robinhood.</div>
+        </div>
+
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="4" y="11" width="16" height="10" rx="2" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8 11V7C8 4.79 9.79 3 12 3C14.21 3 16 4.79 16 7V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="16" r="1.2" fill="currentColor"/>
+            </svg>
+          </div>
+          <div class="trust-label">Encrypted end-to-end</div>
+          <div class="trust-body">Your data is encrypted in transit and at rest. We never sell it.</div>
+        </div>
+
+        <div class="trust-item">
+          <div class="trust-icon">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 3C7 3 3 7 3 12C3 17 7 21 12 21C17 21 21 17 21 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M16 3L21 3L21 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M14 10L21 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="trust-label">Disconnect anytime</div>
+          <div class="trust-body">One tap to disconnect. We delete your data on request.</div>
+        </div>
+      </div>
+
+      <p class="trust-credibility">Built by a former Capital One R&amp;D lead. We know banks.</p>
+    </div>
+  </section>
+
+  <section class="close">
+    <div class="close-inner">
+      <h2 class="close-title">Stop guessing.<em>Start knowing.</em></h2>
+      <button class="close-cta">Get Early Access</button>
+      <p class="close-sub">14 days free. No charge until you're sure.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <div class="footer-logo">Reya</div>
+      <div class="footer-links">
+        <a href="#">How it works</a>
+        <a href="#">Pricing</a>
+        <a href="mailto:hello@reya.money">hello@reya.money</a>
+      </div>
+      <div class="footer-copy">© 2026 Reya</div>
+    </div>
+  </footer>
+
+  <script>
+    (function() {
+      var stickyNav = document.getElementById('stickyNav');
+      var heroSection = document.querySelector('.hero');
+      if (!stickyNav || !heroSection) return;
+      function onScroll() {
+        var heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
+        if (window.scrollY > heroBottom - 80) {
+          stickyNav.classList.add('visible');
+        } else {
+          stickyNav.classList.remove('visible');
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+      onScroll();
+    })();
+  </script>
+
+</body>
+</html>
